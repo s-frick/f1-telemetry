@@ -1,30 +1,104 @@
 <html>
 <head>
-  <script>
-    function go(){
-      print("Start");
-      var exampleSocket = new WebSocket("ws://localhost:8080/echo");
+  <script >
+    var serverUrl;
+    var scheme = "ws";
 
-      exampleSocket.onopen = function (event) {
-        print("Opened")
-        exampleSocket.send("Testing");
-      };
-      exampleSocket.onmessage = function (event) {
-        print(event.data);
-      };
+    // If this is an HTTPS connection, we have to use a secure WebSocket
+    // connection too, so add another "s" to the scheme.
 
+    if (document.location.protocol === "https:") {
+      scheme += "s";
+    }
+    serverUrl = scheme + "://" + document.location.hostname + ":8080";
+    const ws = new WebSocket(serverUrl, "json");
+
+
+    const data = [];
+    // const ws = new WebSocket('ws://localhost:8080/');
+
+    ws.onopen = function open() {
+      ws.send('MOTION');
     }
 
-    function print(s)
-    {
-      var  p = document.createElement("p");
-      p.innerText = s;
-      document.getElementById("output").appendChild(p);
+    ws.onmessage = function incoming(msg) {
+      // data.push(msg);
+      console.log(msg)
+      const data = JSON.parse(msg.data);
+      const carMotionDataListElement = data.carMotionDataList[0];
+      const positionX = carMotionDataListElement.worldPositionX;
+      const positionY = carMotionDataListElement.worldPositionY;
+      const positionZ = carMotionDataListElement.worldPositionZ;
+
+      function transform(val) {
+        const scale = 0.1;
+        const translate = 500;
+        return (val*scale) + translate;
+      }
+      document.getElementById("x").innerHTML = `Pos: X: ${transform(positionX)}`;
+      document.getElementById("y").innerHTML = `Pos: Y: ${transform(positionY)}`;
+      document.getElementById("z").innerHTML = `Pos: Z: ${transform(positionZ)}`;
+
+
+      var ctx = document.getElementById('myChart').getContext('2d');
+      ctx.fillStyle = "rgb(200, 0, 0)";
+      ctx.fillRect(transform(positionX),transform(positionZ),4,4);
     }
+
+    ws.onerror = function (err) {
+      console.error(err)
+    }
+
+    ws.onclose = function () {
+    }
+
+    function stopWS() {
+      ws.close()
+    }
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+    // var myChart = new Chart(ctx, {
+    //   type: 'bar',
+    //   data: {
+    //     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+    //     datasets: [{
+    //       label: '# of Votes',
+    //       data: [12, 19, 3, 5, 2, 3],
+    //       backgroundColor: [
+    //         'rgba(255, 99, 132, 0.2)',
+    //         'rgba(54, 162, 235, 0.2)',
+    //         'rgba(255, 206, 86, 0.2)',
+    //         'rgba(75, 192, 192, 0.2)',
+    //         'rgba(153, 102, 255, 0.2)',
+    //         'rgba(255, 159, 64, 0.2)'
+    //       ],
+    //       borderColor: [
+    //         'rgba(255, 99, 132, 1)',
+    //         'rgba(54, 162, 235, 1)',
+    //         'rgba(255, 206, 86, 1)',
+    //         'rgba(75, 192, 192, 1)',
+    //         'rgba(153, 102, 255, 1)',
+    //         'rgba(255, 159, 64, 1)'
+    //       ],
+    //       borderWidth: 1
+    //     }]
+    //   },
+    //   options: {
+    //     scales: {
+    //       y: {
+    //         beginAtZero: true
+    //       }
+    //     }
+    //   }
+    // });
+
   </script>
 </head>
-<body onload="go()">
-Output:
-<div id="output"></div>
+<body>
+<div id="x"></div>
+<div id="y"></div>
+<div id="z"></div>
+<button onclick="stopWS()">stop</button>
+<canvas id="myChart" width="1000" height="1000" style="border: 1px solid black"></canvas>
 </body>
 </html>

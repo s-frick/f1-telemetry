@@ -16,6 +16,8 @@ public class WebsocketConfig implements WebSocketConfigurer {
 
    @Override
    public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
-      webSocketHandlerRegistry.addHandler(new TelemetryWebsocketHandler(telemetryDataClient), "/");
+      webSocketHandlerRegistry
+            .addHandler(new TelemetryWebsocketHandler(telemetryDataClient), "/")
+            .setAllowedOrigins("*");
    }
 }
