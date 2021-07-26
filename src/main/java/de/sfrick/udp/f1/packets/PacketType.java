@@ -9,7 +9,11 @@ public enum PacketType {
    PARTICIPANTS(4),
    CAR_SETUP(5),
    CAR_TELEMETRY(6),
-   CAR_STATUS(7);
+   CAR_STATUS(7),
+   FINAL_CLASSIFICATION(8),
+   LOBBY_INFO(9),
+   CAR_DAMAGE(10),
+   SESSION_HISTORY(11);
 
 
    public final int value;

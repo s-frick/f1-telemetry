@@ -10,6 +10,16 @@ import java.util.List;
 @Builder
 public class PacketCarDamageData implements Packet {
 
+//   TODO
+/*
+   struct PacketCarDamageData
+   {
+      PacketHeader    m_header;               // Header
+
+      CarDamageData   m_carDamageData[22];
+   };
+*/
+
    private Header header;
    private List<CarDamageData> carDamageData;
 

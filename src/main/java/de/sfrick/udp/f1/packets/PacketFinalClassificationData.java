@@ -11,6 +11,17 @@ import java.util.List;
 @Builder
 public class PacketFinalClassificationData implements Packet {
 
+//   TODO
+/*
+   struct PacketFinalClassificationData
+   {
+      PacketHeader    m_header;                      // Header
+
+      uint8                      m_numCars;          // Number of cars in the final classification
+      FinalClassificationData    m_classificationData[22];
+   };
+*/
+
    private Header header;
    private int numCars;
    private List<FinalClassificationData> classificationData;

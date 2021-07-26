@@ -11,6 +11,16 @@ import java.util.List;
 @Builder
 public class PacketCarStatusData implements Packet {
 
+//   TODO
+/*
+   struct PacketCarStatusData
+   {
+      PacketHeader    	m_header;	   // Header
+
+      CarStatusData	m_carStatusData[22];
+   };
+*/
+
    private Header header;
    private List<CarStatusData> carStatusData;
 
