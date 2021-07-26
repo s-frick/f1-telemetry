@@ -8,9 +8,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class WeatherForecastSample implements Packet {
-
-   private Header header;
+public class WeatherForecastSample {
 
    private SessionType sessionType;
    private int timeOffset;

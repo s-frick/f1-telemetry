@@ -7,8 +7,6 @@ import lombok.Data;
 @Builder
 public class LapData {
 
-//   private PacketHeader header;
-
    private long lastLapTimeMs;
    private long currentLapTimeMs;
    private long sector1TimeMs;

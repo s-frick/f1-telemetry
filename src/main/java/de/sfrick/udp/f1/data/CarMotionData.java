@@ -7,9 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CarMotionData implements Packet {
-
-   private Header header;
+public class CarMotionData {
 
    private int carIndex;
    private boolean playersCar;
