@@ -1,7 +1,7 @@
 package de.sfrick.udp;
 
+import de.sfrick.application.Channel;
 import de.sfrick.application.Message;
-import de.sfrick.application.TelemetryWebsocketHandler;
 import de.sfrick.udp.f1.PacketDeserializer;
 import de.sfrick.udp.f1.packets.Packet;
 import de.sfrick.udp.f1.packets.PacketType;
@@ -14,29 +14,33 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
 public class TelemetryDataClient extends Thread {
 
    private static final Logger LOGGER = LoggerFactory.getLogger(TelemetryDataClient.class);
+
+   private final Map<PacketType, Channel> messageQueue;
    private DatagramSocket socket;
    private boolean running;
    private byte[] buf = new byte[1024];
-   private TelemetryWebsocketHandler websocket;
 
-   public TelemetryDataClient(int port) throws SocketException {
+
+   public TelemetryDataClient(int port, List<Channel> messageQueue) throws SocketException {
       socket = new DatagramSocket(port);
+      this.messageQueue = messageQueue.stream().collect(Collectors.toMap(
+            Channel::getChannelName,
+            channel -> channel
+      ));
+
    }
 
-   public void setWebsocket(TelemetryWebsocketHandler websocket) {
-      this.websocket = websocket;
-   }
 
    public void run() {
-      if (websocket == null) {
-         return;
-      }
       running = true;
 
       while (running) {
@@ -53,11 +57,12 @@ public class TelemetryDataClient extends Thread {
          if (!isNull(telemetryPacket)) {
             LOGGER.debug(telemetryPacket.toJSON());
 
+            PacketType packetType = PacketType.valueOfInt(telemetryPacket.getHeader().getPacketId());
             Message message = Message.builder()
                   .textMessage(new TextMessage(telemetryPacket.toJSON()))
-                  .key(PacketType.valueOfInt(telemetryPacket.getHeader().getPacketId()).toString())
+                  .key(packetType.toString())
                   .build();
-            websocket.broadcast(message);
+            messageQueue.get(packetType).add(message);
          }
       }
       socket.close();
