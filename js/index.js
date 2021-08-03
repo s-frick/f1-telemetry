@@ -1,29 +1,10 @@
 const WebSocket = require('ws');
 const fs = require('fs');
 
-const types = [
-    "motion",
-    "session",
-    "lap",
-    "event",
-    "participants",
-    "car_setup",
-    "car_telemetry",
-    "car_status",
-    "final_classification",
-    "lobby_info",
-    "car_damage",
-    "session_history"
-]
+const types = ["motion", "session", "lap", "event", "participants", "car_setup", "car_telemetry", "car_status", "final_classification", "lobby_info", "car_damage", "session_history"]
 const webSockets = Object.fromEntries(types.map(type => [type, new WebSocket(`ws://localhost:8080/${type}`)]))
-// const webSockets = {
-//     "car_telemetry": new WebSocket('ws://localhost:8080/car_telemetry')
-//     "car_telemetry": new WebSocket('ws://localhost:8080/car_telemetry')
-// };
-
 
 const files = Object.fromEntries(Object.entries(webSockets).map(([key, val]) => [key, fs.createWriteStream(`./data/${key}`)]))
-
 
 function incoming(file, msg) {
     console.log(msg);
