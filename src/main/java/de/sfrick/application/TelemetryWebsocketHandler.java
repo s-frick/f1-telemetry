@@ -1,7 +1,6 @@
 package de.sfrick.application;
 
 import de.sfrick.udp.WebSocketService;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
@@ -10,12 +9,9 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 
-@RequiredArgsConstructor
 public class TelemetryWebsocketHandler extends TextWebSocketHandler {
 
    private static final Logger LOGGER = LoggerFactory.getLogger(TelemetryWebsocketHandler.class);
-
-   private final WebSocketService webSocketService;
 
    @Override
    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -26,7 +22,7 @@ public class TelemetryWebsocketHandler extends TextWebSocketHandler {
    @Override
    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
       super.afterConnectionEstablished(session);
-      Channel channel = webSocketService.addSubscriber(session);
+      Channel channel = WebSocketService.addSubscriber(session);
       if (channel != null) {
          session.sendMessage(new TextMessage(channel.getChannelName().toString()));
       }

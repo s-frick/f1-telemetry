@@ -1,7 +1,6 @@
 package de.sfrick.application;
 
 import de.sfrick.udp.f1.packets.PacketType;
-import lombok.Getter;
 import lombok.SneakyThrows;
 
 import javax.naming.OperationNotSupportedException;

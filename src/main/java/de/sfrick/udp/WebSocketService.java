@@ -54,17 +54,10 @@ public class WebSocketService extends Thread {
    public static Channel addSubscriber(WebSocketSession webSocketSession) {
       Optional<Map.Entry<Channel, List<WebSocketSession>>> channelFound =
             channelSubscribersMap.entrySet().stream().filter(entry -> "/".concat(entry.getKey().getChannelName().toString().toLowerCase()).equals(webSocketSession.getUri().getPath())).findFirst();
-//      channelFound.ifPresent(channelListEntry -> channelSubscribersMap.get(channelListEntry).add(webSocketSession));
       if (channelFound.isPresent()) {
          channelSubscribersMap.get(channelFound.get().getKey()).add(webSocketSession);
       }
       return channelFound.get().getKey();
-//      if (channelSubscribersMap.containsKey(channel)) {
-//         channelSubscribersMap.get(channel).add(webSocketSession);
-//      } else {
-//         List<WebSocketSession> webSocketSessions = new CopyOnWriteArrayList<>(List.of(webSocketSession));
-//         channelSubscribersMap.put(channel, webSocketSessions);
-//      }
    }
 
    public static void unSubscribe(Channel channel, WebSocketSession session) {
